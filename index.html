@@ -3,6 +3,12 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
 <title>Коллекция 26L</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0E7C66">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Коллекция 26L">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{
   --accent:#0E7C66;
@@ -814,5 +820,10 @@ document.addEventListener('change', function(e){
 });
 
 render();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
 </script>
 </body></html>

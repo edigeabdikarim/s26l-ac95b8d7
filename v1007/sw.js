@@ -4,7 +4,7 @@
 // старый service worker продолжил бы отдавать офлайн-копию с данными 10.07.
 // Отдельный CACHE; HTML кэшируется по ФАКТИЧЕСКОМУ URL запроса, чтобы версии в соседних
 // подпапках не мешали офлайну друг друга.
-var CACHE = 'k26l-1007-v2';
+var CACHE = 'k26l-1007-v3';
 var ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', function (e) {

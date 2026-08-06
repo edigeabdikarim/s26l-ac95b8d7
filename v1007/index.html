@@ -233,6 +233,29 @@
   .rating-table tr.lead:hover td{background:var(--accent-tint)}
   .rating-table td.i1{padding-left:24px;color:var(--ink2)}
   .rating-table tbody tr:last-child td{border-bottom:none}
+  /* ===== Бренд (карточка бренда) ===== */
+  .brand-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .brand-scroll{max-height:66vh;overflow:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px}
+  .brand-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;min-width:560px}
+  .brand-table th,.brand-table td{padding:9px 10px;text-align:right;white-space:nowrap;
+    border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+  .brand-table th:last-child,.brand-table td:last-child{border-right:none}
+  .brand-table th:first-child,.brand-table td:first-child{text-align:left}
+  .brand-table thead th{position:sticky;top:0;z-index:2;background:var(--surface);
+    font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2);font-weight:600}
+  .brand-table th.colpct,.brand-table td.pctcell{min-width:128px}
+  .brand-table tr.tgroup td{font-weight:700;background:var(--bg)}
+  .brand-table tr.brand-row td{cursor:pointer}
+  .brand-table tr.brand-row:hover td{background:var(--accent-soft)}
+  .brand-table td.i1{padding-left:24px;color:var(--ink2)}
+  .brand-table tfoot td{position:sticky;bottom:0;z-index:2;background:var(--surface);
+    font-weight:700;border-top:2px solid var(--line);border-bottom:none}
+  .bmark{display:inline-block;width:12px;color:var(--ink3);font-size:11px}
+  .brand-stores td{background:var(--bg);padding:8px 10px 10px 24px;text-align:left;white-space:normal}
+  .bstore{display:inline-flex;align-items:center;gap:6px;margin:3px 10px 3px 0;font-size:12px;color:var(--ink2)}
+  .bstore .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .bstore b{color:var(--ink);font-weight:600}
+  .bstore.service{opacity:.65}
   /* доля продаж: мини-шкала (трек+заполнение) слева + число отдельно справа — не наложены */
   .pctrow{display:flex;align-items:center;gap:9px;justify-content:flex-end}
   .pcttrack{flex:1;min-width:44px;height:13px;border-radius:4px;background:var(--accent-tint);
@@ -300,6 +323,7 @@
     <button class="tab-btn active" type="button" data-view="kpi" role="tab" aria-selected="true">Показатели</button>
     <button class="tab-btn" type="button" data-view="rating" role="tab" aria-selected="false">Рейтинг</button>
     <button class="tab-btn" type="button" data-view="sizes" role="tab" aria-selected="false">Размеры</button>
+    <button class="tab-btn" type="button" data-view="brand" role="tab" aria-selected="false">Бренд</button>
   </div>
 </div></header>
 <main class="page" id="app"></main>
@@ -359,6 +383,102 @@
     inScope: inScope, blockOf: blockOf, classify: classify,
     normNum: normNum, numLabel: numLabel, LETTER_ORDER: LETTER_ORDER
   };
+});
+</script>
+<script>// brandcard.js — агрегация для раздела «Бренд» (карточка бренда).
+// ES5-совместимо (var/function), работает в Node (module.exports) и в браузере (window.BRANDCARD).
+// Повторяет лист «Анализ по Брендам»: строки Тип → Родитель, продажи net, проценты от прихода строки.
+(function (root, factory) {
+  var api = factory();
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.BRANDCARD = api;
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  // Служебные точки — не магазины. Показываем (иначе сумма не сойдётся со строкой), но в конце списка.
+  var SERVICE = { 'Ремонт БРАКА': 1, 'Склад Офис': 1, 'Склад Униформы': 1 };
+
+  function isService(name) {
+    return Object.prototype.hasOwnProperty.call(SERVICE, name);
+  }
+  function safeDiv(a, b) { return b ? a / b : 0; }
+  function byKeyRu(a, b) { return a.key.localeCompare(b.key, 'ru'); }
+
+  function blank(key) {
+    return { key: key, in: 0, soldNet: 0, soldPct: 0, rem: 0, remPct: 0 };
+  }
+  function addArticle(acc, a) {
+    acc.in += a.in;
+    acc.soldNet += a.sold + a.ret;   // ret отрицателен
+    acc.rem += a.rem;
+  }
+  function finish(acc) {
+    acc.soldPct = safeDiv(acc.soldNet, acc.in);
+    acc.remPct = safeDiv(acc.rem, acc.in);
+    return acc;
+  }
+
+  // articles -> { types:[{...,rows:[...]}], total:{...} }
+  function build(articles) {
+    var typeMap = {}, types = [], total = blank(''), i, j, a, t, p;
+    for (i = 0; i < articles.length; i++) {
+      a = articles[i];
+      t = typeMap[a.t];
+      if (!t) {
+        t = blank(a.t);
+        t.rows = [];
+        t._rowMap = {};
+        typeMap[a.t] = t;
+        types.push(t);
+      }
+      p = t._rowMap[a.p];
+      if (!p) {
+        p = blank(a.p);
+        t._rowMap[a.p] = p;
+        t.rows.push(p);
+      }
+      addArticle(p, a);
+      addArticle(t, a);
+      addArticle(total, a);
+    }
+    types.sort(byKeyRu);
+    for (i = 0; i < types.length; i++) {
+      types[i].rows.sort(byKeyRu);
+      finish(types[i]);
+      delete types[i]._rowMap;
+      for (j = 0; j < types[i].rows.length; j++) finish(types[i].rows[j]);
+    }
+    return { types: types, total: finish(total) };
+  }
+
+  // Разрез одной строки (Тип+Родитель) по магазинам: [{key, soldNet, rem}]
+  function stores(articles, typeKey, parentKey) {
+    var acc = {}, order = [], i, a, s, r;
+    for (i = 0; i < articles.length; i++) {
+      a = articles[i];
+      if (a.t !== typeKey || a.p !== parentKey) continue;
+      for (s in a.stores) {
+        if (!Object.prototype.hasOwnProperty.call(a.stores, s)) continue;
+        r = acc[s];
+        if (!r) { r = { key: s, soldNet: 0, rem: 0 }; acc[s] = r; order.push(r); }
+        r.soldNet += a.stores[s].sold + a.stores[s].ret;
+        r.rem += a.stores[s].rem;
+      }
+    }
+    var out = [];
+    for (i = 0; i < order.length; i++) {
+      if (order[i].soldNet !== 0 || order[i].rem !== 0) out.push(order[i]);
+    }
+    out.sort(function (x, y) {
+      var sx = isService(x.key) ? 1 : 0, sy = isService(y.key) ? 1 : 0;
+      if (sx !== sy) return sx - sy;                               // служебные склады в конец
+      if (y.soldNet !== x.soldNet) return y.soldNet - x.soldNet;   // по продажам убыванием
+      return x.key.localeCompare(y.key, 'ru');
+    });
+    return out;
+  }
+
+  return { build: build, stores: stores, isService: isService };
 });
 </script>
 <script>
@@ -552,6 +672,83 @@ function renderRating(s){
     '<h2 class="card-title">'+title+'</h2>'+
     '<div class="rating-controls">'+dimCtl+'</div></div>'+
     body+'</section>';
+}
+
+// ===== Бренд: карточка выбранного бренда (повторяет лист «Анализ по Брендам») =====
+var BST = { open:{} };   // ключ «Тип|Родитель» -> раскрыта ли строка магазинов
+function brandKey(type, parent){ return type+'|'+parent; }
+
+function brandRowHtml(r, o){
+  o = o || {};
+  var w = Math.round((r.soldPct||0)*100); if(w<0)w=0; if(w>100)w=100;
+  var trAttr, mark;
+  if (o.group){
+    trAttr = ' class="tgroup"';
+    mark = '';
+  } else {
+    trAttr = ' class="brand-row" data-brandrow="1" data-btype="'+esc(o.type)+'" data-bparent="'+esc(r.key)+'"';
+    mark = '<span class="bmark">'+(o.open?'▾':'▸')+'</span>';
+  }
+  return '<tr'+trAttr+'>'+
+    '<td'+(o.group?'':' class="i1"')+'>'+mark+esc(r.key)+'</td>'+
+    '<td>'+fmt(r.in)+'</td>'+
+    '<td>'+fmt(r.soldNet)+'</td>'+
+    '<td class="pctcell col-pct"><div class="pctrow"><span class="pcttrack"><span class="pctfill" style="width:'+w+'%"></span></span>'+
+      '<span class="pctnum">'+pct(r.soldPct)+'</span></div></td>'+
+    '<td>'+fmt(r.rem)+'</td>'+
+    '<td>'+pct(r.remPct)+'</td>'+
+  '</tr>';
+}
+function brandStoresHtml(arts, type, parent){
+  var list = BRANDCARD.stores(arts, type, parent), i, x, chips='';
+  if (!list.length) return '<tr class="brand-stores"><td colspan="6">Движения по магазинам нет</td></tr>';
+  for (i=0;i<list.length;i++){
+    x = list[i];
+    chips += '<span class="bstore'+(BRANDCARD.isService(x.key)?' service':'')+'">'+
+      '<span class="dot" style="background:'+storeColor(x.key)+'"></span>'+
+      esc(x.key)+' <b>'+fmt(x.soldNet)+'</b> / '+fmt(x.rem)+'</span>';
+  }
+  return '<tr class="brand-stores"><td colspan="6">'+chips+'</td></tr>';
+}
+function brandHeadRow(){
+  var cols = ['Название','Приняли','Продано шт','Продано %','Остаток шт','Остаток %'];
+  var h='<tr>', i;
+  for (i=0;i<cols.length;i++) h += '<th'+(i===3?' class="colpct"':'')+'>'+cols[i]+'</th>';
+  return h+'</tr>';
+}
+function brandTotalRow(t){
+  var w = Math.round((t.soldPct||0)*100); if(w<0)w=0; if(w>100)w=100;
+  return '<tr><td>ИТОГО</td><td>'+fmt(t.in)+'</td><td>'+fmt(t.soldNet)+'</td>'+
+    '<td class="pctcell col-pct"><div class="pctrow"><span class="pcttrack"><span class="pctfill" style="width:'+w+'%"></span></span>'+
+      '<span class="pctnum">'+pct(t.soldPct)+'</span></div></td>'+
+    '<td>'+fmt(t.rem)+'</td><td>'+pct(t.remPct)+'</td></tr>';
+}
+function renderBrand(s){
+  if (!ST.brand){
+    return '<section class="card"><div class="empty">Выберите бренд в шапке — раздел покажет его товары: '+
+           'сколько приняли, продали и осталось</div></section>';
+  }
+  var title = 'Бренд · '+esc(ST.brand)+' · '+esc(ST.pol);
+  var card = BRANDCARD.build(s.arts);
+  if (!card.types.length){
+    return '<section class="card"><div class="brand-head"><h2 class="card-title">'+title+'</h2></div>'+
+           '<div class="empty">Нет данных в этом срезе</div></section>';
+  }
+  var body='', i, j, t, isOpen;
+  for (i=0;i<card.types.length;i++){
+    t = card.types[i];
+    body += brandRowHtml(t, { group:true });
+    for (j=0;j<t.rows.length;j++){
+      isOpen = !!BST.open[brandKey(t.key, t.rows[j].key)];
+      body += brandRowHtml(t.rows[j], { type:t.key, open:isOpen });
+      if (isOpen) body += brandStoresHtml(s.arts, t.key, t.rows[j].key);
+    }
+  }
+  return '<section class="card">'+
+    '<div class="brand-head"><h2 class="card-title">'+title+'</h2></div>'+
+    '<div class="brand-scroll"><table class="brand-table"><thead>'+brandHeadRow()+'</thead>'+
+    '<tbody>'+body+'</tbody><tfoot>'+brandTotalRow(card.total)+'</tfoot></table></div>'+
+  '</section>';
 }
 // ===== Размеры (Task 6): выбор товара + базовый режим Приход/Продано =====
 // Step 1: динамический список товаров (по типу) + валидатор
@@ -831,9 +1028,10 @@ function render(){
   if (IS_TABS){
     if (ST.view==='rating')      out = renderRating(s);
     else if (ST.view==='sizes')  out = renderSizes(s);
+    else if (ST.view==='brand')  out = renderBrand(s);
     else                         out = renderKpi(s.tot) + renderBands(s.tot);   // 'kpi'
   } else {
-    out = renderKpi(s.tot) + renderBands(s.tot) + renderRating(s) + renderSizes(s);
+    out = renderKpi(s.tot) + renderBands(s.tot) + renderRating(s) + renderSizes(s) + renderBrand(s);
   }
   el('app').innerHTML = out;
   updateHeaderUI();
@@ -841,13 +1039,13 @@ function render(){
 
 // события топбара
 el('brandSelect').onchange = function(e){
-  ST.brand = e.target.value || null; ST.product = null; ST.store = null; render();
+  ST.brand = e.target.value || null; ST.product = null; ST.store = null; BST.open = {}; render();
 };
 function stepBrand(delta){
   var sel = el('brandSelect');
   var n = sel.options.length;
   sel.selectedIndex = (sel.selectedIndex + delta + n) % n;   // циклично, включая «Вся коллекция»
-  ST.brand = sel.value || null; ST.product = null; ST.store = null; render();
+  ST.brand = sel.value || null; ST.product = null; ST.store = null; BST.open = {}; render();
 }
 el('brandPrev').onclick = function(){ stepBrand(-1); };
 el('brandNext').onclick = function(){ stepBrand(1); };
@@ -855,7 +1053,7 @@ el('brandNext').onclick = function(){ stepBrand(1); };
 var polBtns = document.querySelectorAll('#polSeg .seg-btn'), pi;
 for (pi=0; pi<polBtns.length; pi++){
   polBtns[pi].onclick = function(){
-    ST.pol = this.getAttribute('data-pol'); ST.product = null; ST.store = null; render();
+    ST.pol = this.getAttribute('data-pol'); ST.product = null; ST.store = null; BST.open = {}; render();
   };
 }
 
@@ -867,6 +1065,19 @@ document.addEventListener('click', function(e){
   var ps = t.getAttribute('data-prodstep'); if (ps){ stepProduct(parseInt(ps,10)); return; }
   var sm = t.getAttribute('data-sizemode'); if (sm){ ST.sizeMode = sm; if (sm!=='storedisc') ST.store=null; render(); return; }
   var rd = t.getAttribute('data-rdim');   if (rd){ RST.dim=rd; render(); return; }
+  // раскрытие разреза по магазинам: клик приходит на <td> или на вложенный <span>,
+  // поэтому поднимаемся вверх в поисках <tr data-brandrow>
+  var br = null, node = t, depth = 0;
+  while (node && depth < 3){
+    if (node.getAttribute && node.getAttribute('data-brandrow')){ br = node; break; }
+    node = node.parentNode; depth++;
+  }
+  if (br){
+    var bk = brandKey(br.getAttribute('data-btype'), br.getAttribute('data-bparent'));
+    if (BST.open[bk]) delete BST.open[bk]; else BST.open[bk] = 1;
+    render();
+    return;
+  }
 });
 // делегированный change для выпадашки товара в теле (навешивается ОДИН раз)
 document.addEventListener('change', function(e){

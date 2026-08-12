@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Сверка новой версии дашборда «Коллекция 26L» со старой</title>
+<style>
+:root{
+  --bg:#fbfaf7; --surface:#ffffff; --fg:#1e2227; --muted:#5d6873;
+  --border:#e2ded5; --border-soft:#ece8e0; --zebra:#f8f6f1; --th-bg:#f2efe8;
+  --link:#175a7d; --code-bg:#f0ede6; --code-fg:#3d4750;
+  --callout-bg:#fdf6e7; --callout-bd:#e3c98d;
+  --quote-bg:#eef3f6; --quote-bd:#5b93b0;
+  --shadow:0 1px 2px rgba(30,34,39,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#15181b; --surface:#1b1f23; --fg:#e3e5e7; --muted:#9aa4ae;
+    --border:#2f353b; --border-soft:#262b30; --zebra:#1f2429; --th-bg:#252b31;
+    --link:#7fbede; --code-bg:#252b31; --code-fg:#cdd4da;
+    --callout-bg:#242015; --callout-bd:#6b5a30;
+    --quote-bg:#1a2228; --quote-bd:#4d7f99;
+    --shadow:none;
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:17px; line-height:1.6;
+  -webkit-font-smoothing:antialiased; overflow-wrap:break-word;
+}
+@media (min-width:760px){ body{font-size:18px} }
+.page{max-width:880px; margin:0 auto; padding:22px 16px 72px}
+@media (min-width:760px){ .page{padding:44px 28px 96px} }
+h1,h2,h3{line-height:1.25; font-weight:700; letter-spacing:-.01em}
+h1{font-size:1.62em; margin:0 0 .55em}
+h2{font-size:1.26em; margin:0 0 .8em}
+h3{font-size:1.06em; margin:1.7em 0 .6em; color:var(--fg)}
+p{margin:0 0 1.05em}
+strong{font-weight:660}
+em{font-style:italic}
+a{color:var(--link)}
+code{
+  font-family:ui-monospace,SFMono-Regular,"SF Mono",Consolas,"Liberation Mono",Menlo,monospace;
+  font-size:.87em; background:var(--code-bg); color:var(--code-fg);
+  padding:.1em .34em; border-radius:4px; overflow-wrap:break-word;
+}
+.doc-head{padding-bottom:.2em}
+.doc-head p:first-of-type{font-size:1.03em; color:var(--fg)}
+.toc{
+  margin:1.4em 0 .4em; padding:1em 1.15em .9em; background:var(--surface);
+  border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow);
+}
+.toc-title{
+  margin:0 0 .55em; font-size:.8em; font-weight:700; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--muted);
+}
+.toc ol{margin:0; padding:0; list-style:none}
+.toc li{margin:0; border-top:1px solid var(--border-soft)}
+.toc li:first-child{border-top:none}
+.toc a{display:block; padding:.42em 0; text-decoration:none; color:var(--link)}
+.toc a:hover{text-decoration:underline}
+section{margin-top:2.1em; padding-top:1.7em; border-top:1px solid var(--border)}
+section.callout{
+  background:var(--callout-bg); border:1px solid var(--callout-bd);
+  border-radius:14px; padding:1.35em 1.15em .35em; margin-top:1.8em;
+}
+section.callout .table-wrap{background:var(--surface)}
+.table-wrap{
+  overflow-x:auto; -webkit-overflow-scrolling:touch; margin:1.1em 0 1.35em;
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  box-shadow:var(--shadow);
+}
+.table-wrap:focus{outline:2px solid var(--link); outline-offset:2px}
+table{border-collapse:collapse; width:100%; font-size:.93em; line-height:1.45}
+th,td{
+  padding:.55em .72em; text-align:left; vertical-align:top;
+  border-bottom:1px solid var(--border-soft); overflow-wrap:break-word;
+}
+thead th{background:var(--th-bg); font-weight:660; border-bottom:1px solid var(--border)}
+tbody tr:nth-child(even){background:var(--zebra)}
+tbody tr:last-child td{border-bottom:none}
+th.num{text-align:right; font-variant-numeric:tabular-nums}
+td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+th.ctr,td.ctr{text-align:center}
+blockquote{
+  margin:1.25em 0; padding:.7em 1em; background:var(--quote-bg);
+  border-left:4px solid var(--quote-bd); border-radius:0 8px 8px 0;
+}
+blockquote p{margin:0}
+blockquote p + p{margin-top:.6em}
+ul,ol{margin:0 0 1.05em; padding-left:1.35em}
+li{margin:.3em 0}
+li > ul, li > ol{margin:.35em 0 .2em}
+hr{border:none; border-top:1px solid var(--border); margin:2em 0}
+.totop{
+  display:inline-block; margin:.2em 0 .1em; padding:.3em 0;
+  font-size:.85em; color:var(--muted); text-decoration:none;
+}
+.totop:hover{color:var(--link)}
+@media print{
+  .toc,.totop{display:none !important}
+  body{background:#fff; color:#000; font-size:10.5pt}
+  .page{max-width:none; padding:0}
+  section{border-top:1px solid #ccc; margin-top:1.2em; padding-top:1em}
+  section.callout{background:#fff; border:1px solid #999}
+  .table-wrap{overflow:visible !important; border:1px solid #bbb; box-shadow:none}
+  .table-wrap table{min-width:0 !important; font-size:9pt}
+  table,tr,td,th,blockquote{page-break-inside:avoid; break-inside:avoid}
+  thead{display:table-header-group}
+  h1,h2,h3{page-break-after:avoid; break-after:avoid}
+  a{color:#000; text-decoration:none}
+  code{background:none; border:1px solid #ddd}
+}
+</style>
+</head>
+<body>
+<main class="page">
+<header class="doc-head" id="top">
+<h1>Сверка новой версии дашборда «Коллекция 26L» со старой</h1>
+<p><strong>Обе версии посчитаны на одну и ту же дату — 31.07.2026.</strong> Старая версия собрана из файлов, которые выгружали из 1С руками. Новая берёт те же данные напрямую из ваших таблиц, без ручной выгрузки.</p>
+<p>Документ отвечает на один вопрос: <strong>почему числа разошлись и какому из них верить.</strong></p>
+</header>
+<nav class="toc" aria-label="Разделы документа">
+<p class="toc-title">Разделы</p>
+<ol>
+<li><a href="#korotko-chemu-verit">Коротко: чему верить</a></li>
+<li><a href="#1-prihod-90-shtuk">1. Приход: +90 штук</a></li>
+<li><a href="#2-artikuly-1-548-1-555">2. Артикулы: 1 548 → 1 555</a></li>
+<li><a href="#3-vozvraty-146-262-eto-ne-novye-vozvraty-eto-drugoy">3. Возвраты: 146 → 262. Это не новые возвраты, это другой способ их показывать</a></li>
+<li><a href="#4-dekabr-2025-21-vesch-bylo-edinstvennym-nastoyaschim">4. Декабрь 2025: 21 вещь — было единственным настоящим расхождением, теперь закрыто</a></li>
+<li><a href="#5-ostatok-11-195-11-389-dva-raznyh-sposoba-scheta">5. Остаток: 11 195 → 11 389. Два разных способа счёта</a></li>
+<li><a href="#6-otricatelnyy-ostatok-ostalsya-odin-artikul-na-odnu">6. Отрицательный остаток: остался один артикул на одну штуку</a></li>
+<li><a href="#7-magaziny-vosem-torgovyh-tochek-sovpali-tri-skladskie">7. Магазины: восемь торговых точек совпали, три складские строки ушли</a></li>
+<li><a href="#8-skidki-srednyaya-sovpala-do-desyatoy-doli-dve-korziny">8. Скидки: средняя совпала до десятой доли, две корзины перетасовались</a></li>
+<li><a href="#9-muzhskoe-i-zhenskoe">9. Мужское и женское</a></li>
+<li><a href="#10-razmery">10. Размеры</a></li>
+<li><a href="#11-kategorii-prochee-pusto-zato-poyavilsya-tip-platya">11. Категории: «Прочее» пусто, зато появился тип «Платья»</a></li>
+<li><a href="#12-chto-proverili-i-rashozhdeniy-ne-nashli">12. Что проверили и расхождений не нашли</a></li>
+<li><a href="#13-oshibka-kotoruyu-my-nashli-ne-stali-pryatat-i">13. Ошибка, которую мы нашли, не стали прятать и починили</a></li>
+<li><a href="#14-otkuda-teper-berutsya-chisla">14. Откуда теперь берутся числа</a></li>
+<li><a href="#voprosy-zakryty-chto-vy-reshili">Вопросы закрыты: что вы решили</a></li>
+</ol></nav>
+<section id="korotko-chemu-verit" class="callout">
+<h2>Коротко: чему верить</h2>
+<div class="table-wrap" tabindex="0"><table style="min-width:88ch"><thead><tr><th>Показатель</th><th class="num">Старая версия</th><th class="num">Новая версия</th><th class="num">Разница</th><th>Какое число верное</th></tr></thead><tbody><tr><td>Приход (сколько привезли)</td><td class="num">18 011</td><td class="num"><strong>18 101</strong></td><td class="num">+90</td><td><strong>Новое.</strong> Старый лист прихода обрывался на 6 июля</td></tr><tr><td>Продано (без учёта возвратов)</td><td class="num">6 864</td><td class="num"><strong>6 974</strong></td><td class="num">+110</td><td><strong>Новое.</strong> Старое число уже было уменьшено на часть возвратов</td></tr><tr><td>Возвраты</td><td class="num">−146</td><td class="num"><strong>−262</strong></td><td class="num">−116</td><td><strong>Новое.</strong> Все 146 старых возвратов есть в новом, плюс ещё 116</td></tr><tr><td>Продано за вычетом возвратов</td><td class="num">6 718</td><td class="num"><strong>6 712</strong></td><td class="num">−6</td><td><strong>Новое.</strong> Ровно на те 6 вещей, которые мы раньше считали дважды и починили</td></tr><tr><td>Остаток</td><td class="num">11 195</td><td class="num"><strong>11 389</strong></td><td class="num">+194</td><td><strong>Новое</strong> — это расчёт, вы его и выбрали; см. раздел 5</td></tr><tr><td>Артикулов</td><td class="num">1 548</td><td class="num"><strong>1 555</strong></td><td class="num">+7</td><td><strong>Новое</strong>, см. раздел 2</td></tr><tr><td>Средняя скидка</td><td class="num">25,27 %</td><td class="num">25,25 %</td><td class="num">−0,02 п.п.</td><td>На экране обе показывают 25,3 %</td></tr></tbody></table></div>
+<p><strong>Вывод.</strong> У прошлой сверки была ровно одна настоящая слабость: новая версия не видела первые шесть дней продаж коллекции (26–31 декабря 2025, 21 вещь на 2,17 млн ₸). <strong>Её больше нет — декабрь взяли отдельной выгрузкой из 1С и влили</strong> (раздел 4). Теперь новой версии можно верить по всем срезам: по приходу, по продажам, по возвратам, по скидкам, по размерам, по магазинам, по мужскому и женскому.</p>
+<p>Единственное, чем итог продаж расходится со старой версией, — это <strong>6 штук</strong>, которые мы раньше считали дважды. Ошибку нашли сами, признали в прошлой редакции этого документа и починили; подробности в разделе 13.</p>
+<p><strong>1 556</strong> — это все товары, которые встретились хотя бы в одной из версий (1 548 в старой плюс 8, появившихся только в новой). По ним:</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:46ch"><thead><tr><th>Что сверяли</th><th class="num">Совпало артикул в артикул</th></tr></thead><tbody><tr><td>Приход</td><td class="num">1 536 из 1 556</td></tr><tr><td>Продажи за вычетом возвратов</td><td class="num">1 529 из 1 556</td></tr><tr><td>Остаток</td><td class="num">1 434 из 1 556</td></tr></tbody></table></div>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="1-prihod-90-shtuk">
+<h2>1. Приход: +90 штук</h2>
+<p>Все 90 штук — это товар, которого в старом листе прихода просто не было. Разложение до последней штуки:</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Что</th><th class="num">Штук</th></tr></thead><tbody><tr><td>PORTOFINO, две футболки — приход 11 и 14 июня</td><td class="num">19</td></tr><tr><td>Приходы после 6 июля (старый лист на этом обрывался)</td><td class="num">45</td></tr><tr><td>Январский приход трёх артикулов, найденный в отдельной выгрузке из 1С</td><td class="num">26</td></tr><tr><td><strong>Итого</strong></td><td class="num"><strong>90</strong></td></tr></tbody></table></div>
+<p>Поимённо все 20 артикулов, у которых приход изменился:</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:88ch"><thead><tr><th>Артикул</th><th>Бренд</th><th>Категория</th><th class="num">Было</th><th class="num">Стало</th><th class="num">+/−</th><th>Когда пришло</th></tr></thead><tbody><tr><td>26L-KOBRA-PM931-790</td><td>PEOPLE</td><td>Слаксы</td><td class="num">9</td><td class="num">23</td><td class="num">+14</td><td>10 и 12 июля</td></tr><tr><td>26L-OTISMH-S100EU-07-950</td><td>BRANDT</td><td>Рубашка д/р</td><td class="num">0</td><td class="num">10</td><td class="num">+10</td><td>3 и 4 января</td></tr><tr><td>26L-PFW0025-011</td><td>PORTOFINO</td><td>Футболка к/р</td><td class="num">0</td><td class="num">10</td><td class="num">+10</td><td>11 и 14 июня</td></tr><tr><td>26L-PFW0025-012</td><td>PORTOFINO</td><td>Футболка к/р</td><td class="num">0</td><td class="num">9</td><td class="num">+9</td><td>11 и 14 июня</td></tr><tr><td>26L-AOMORI-PM931-790</td><td>PEOPLE</td><td>Костюм лето</td><td class="num">12</td><td class="num">20</td><td class="num">+8</td><td>10 и 12 июля</td></tr><tr><td>26L-B024C005802</td><td>BOGGI</td><td>Футболка к/р</td><td class="num">0</td><td class="num">8</td><td class="num">+8</td><td>27 и 29 января</td></tr><tr><td>26L-B024C005803</td><td>BOGGI</td><td>Футболка к/р</td><td class="num">0</td><td class="num">8</td><td class="num">+8</td><td>27 и 29 января</td></tr><tr><td>26L-ICHIPM931-260</td><td>PEOPLE</td><td>Жилет</td><td class="num">0</td><td class="num">6</td><td class="num">+6</td><td>10 и 12 июля</td></tr><tr><td>26L-M6EV01-R9110</td><td>MEIMEIJ</td><td>Блуза К/Р</td><td class="num">0</td><td class="num">4</td><td class="num">+4</td><td>10 июля</td></tr><tr><td>26L-ICHIPM931-790</td><td>PEOPLE</td><td>Жилет</td><td class="num">10</td><td class="num">12</td><td class="num">+2</td><td>10 июля</td></tr><tr><td>26L-RAS-TREVI-901</td><td>DUNO</td><td>Трико лето</td><td class="num">94</td><td class="num">96</td><td class="num">+2</td><td>18 и 19 июля</td></tr><tr><td>26L-116295-P6219-ASF-NIZ</td><td>ALYSI</td><td>Палаццо</td><td class="num">0</td><td class="num">1</td><td class="num">+1</td><td>27 июля</td></tr><tr><td>26L-116295-P6219-ASF-VERH</td><td>ALYSI</td><td>Блуза</td><td class="num">0</td><td class="num">1</td><td class="num">+1</td><td>27 июля</td></tr><tr><td>26L-B026P000304</td><td>BOGGI</td><td>Футболка к/р</td><td class="num">10</td><td class="num">11</td><td class="num">+1</td><td>17 июля</td></tr><tr><td>26L-CN5281-026</td><td>CIRCOLO</td><td>Лен</td><td class="num">16</td><td class="num">17</td><td class="num">+1</td><td>24 июля</td></tr><tr><td>26L-DUSON-TREVI-861</td><td>DUNO</td><td>Трико</td><td class="num">93</td><td class="num">94</td><td class="num">+1</td><td>26 июля</td></tr><tr><td>26L-DUSON-TREVI-901</td><td>DUNO</td><td>Трико</td><td class="num">35</td><td class="num">36</td><td class="num">+1</td><td>31 июля</td></tr><tr><td>26L-RAS-TREVI-861</td><td>DUNO</td><td>Трико лето</td><td class="num">194</td><td class="num">195</td><td class="num">+1</td><td>11 июля</td></tr><tr><td>26L-SJ2610-TES-TCT-BLUNOT</td><td>SANNINO</td><td>Карго</td><td class="num">17</td><td class="num">18</td><td class="num">+1</td><td>15 июля</td></tr><tr><td>26L-WIMBLEDONS-300128-91</td><td>BRIGLIA</td><td>Слаксы</td><td class="num">21</td><td class="num">22</td><td class="num">+1</td><td>16 июля</td></tr></tbody></table></div>
+<p><strong>Что новый приход правильный, доказывает сам старый дашборд.</strong> Возьмите слаксы PEOPLE <code>26L-KOBRA-PM931-790</code>. В старой версии по ним написано: пришло 9, продано 14, вернули 1, на остатке 10. Такого быть не может — нельзя продать 14, если пришло 9. В новой версии: пришло 23, продано 16, вернули 3, остаток 10. Остаток тот же самый, и теперь он сходится с приходом и продажами. Не хватало ровно тех 14 штук, которые старый лист не успел захватить.</p>
+<p>По брендам приход изменился только у десяти: PEOPLE +30, PORTOFINO +19, BOGGI +17, BRANDT +10, DUNO +5, MEIMEIJ +4, ALYSI +2, BRIGLIA, CIRCOLO и SANNINO — по +1.</p>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="2-artikuly-1-548-1-555">
+<h2>2. Артикулы: 1 548 → 1 555</h2>
+<p>В старой версии в файле лежала 1 551 строка, но <strong>три товара двоились</strong>: приход был записан под одним названием категории, а продажа — под другим, и дашборд считал их разными артикулами. У каждой такой пары приход целиком лежал в одной строке, а продажи — в другой, с нулевым приходом:</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:88ch"><thead><tr><th>Товар</th><th>Строка с приходом</th><th>Строка с продажей</th></tr></thead><tbody><tr><td>ALYSI <code>26L-116837-P6220-FANGO</code></td><td>«Пиджак лето женский»: приход 7, продано 0</td><td>«Костюм женский лето»: приход 0, продано 1</td></tr><tr><td>BRIGLIA <code>26L-MONTREALP-300132-80</code></td><td>«Слаксы»: приход 8, продано 4</td><td>«Чинос»: приход 0, продано 1</td></tr><tr><td>PT1 <code>26L-COZSRAZAOKLTVD04-0445</code></td><td>«Карго»: приход 12, продано 4</td><td>«Слаксы»: приход 0, продано 1</td></tr></tbody></table></div>
+<p>Новая версия берёт бренд, категорию и пол для продажи из прихода, поэтому такие пары склеиваются. Разных артикулов в старой версии на самом деле было <strong>1 548</strong>.</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Что произошло</th><th class="num">Артикулов</th></tr></thead><tbody><tr><td>Было разных артикулов в старой версии</td><td class="num">1 548</td></tr><tr><td>Появилось в новой</td><td class="num">+8</td></tr><tr><td>Исчезло из новой</td><td class="num">−1</td></tr><tr><td><strong>Стало</strong></td><td class="num"><strong>1 555</strong></td></tr></tbody></table></div>
+<p>Восемь появившихся:</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:88ch"><thead><tr><th>Артикул</th><th>Бренд</th><th class="num">Приход</th><th class="num">Продано</th><th>Откуда взялся</th></tr></thead><tbody><tr><td>26L-OTISMH-S100EU-07-950</td><td>BRANDT</td><td class="num">10</td><td class="num">4</td><td>1С переписала код артикула (был <code>…-107-950</code>); приход нашёлся в январе, в отдельной выгрузке из 1С</td></tr><tr><td>26L-PFW0025-011</td><td>PORTOFINO</td><td class="num">10</td><td class="num">0</td><td>Приход 11 и 14 июня, в старом листе его не было</td></tr><tr><td>26L-PFW0025-012</td><td>PORTOFINO</td><td class="num">9</td><td class="num">0</td><td>То же</td></tr><tr><td>26L-ICHIPM931-260</td><td>PEOPLE</td><td class="num">6</td><td class="num">0</td><td>Приход 10 и 12 июля</td></tr><tr><td>26L-M6EV01-R9110</td><td>MEIMEIJ</td><td class="num">4</td><td class="num">0</td><td>Приход 10 июля</td></tr><tr><td>26L-116295-P6219-ASF-NIZ</td><td>ALYSI</td><td class="num">1</td><td class="num">0</td><td>Приход 27 июля</td></tr><tr><td>26L-116295-P6219-ASF-VERH</td><td>ALYSI</td><td class="num">1</td><td class="num">0</td><td>Приход 27 июля</td></tr><tr><td>26L-J600-SWD-CN9615-274</td><td>FRADI</td><td class="num">0</td><td class="num">1</td><td>1С исправила опечатку в коде (было <code>CN6915</code>)</td></tr></tbody></table></div>
+<p>Исчезнувший один — <code>26L-OTISMH-S100EU-107-950</code> BRANDT: это тот же BRANDT под старым кодом.</p>
+<p><strong>Оговорка по BRANDT.</strong> Под старым кодом в старом листе продаж было <strong>две</strong> продажи (18 и 24 января, обе в Мире). Под новым кодом в новом источнике их <strong>четыре</strong>: те же две плюс <strong>5 июня и 18 июля в Астане, которых в старом листе нет ни под каким кодом</strong>. Приход на этот артикул раньше не находился ни под одним из кодов — теперь он есть: 10 штук, 3 и 4 января, и остаток по нему стал 6.</p>
+<p>Отдельно: новая версия приводит написание артикула к единому виду. <strong>В новом источнике</strong> встречаются <code>26l-…</code> со строчной буквой (38 строк прихода и 25 строк продаж, четыре артикула), префикс <code>26LZ-</code> вместо <code>26L-</code> (104 строки продаж, десять артикулов) и кириллическая «С» вместо латинской «C» (1 строка).</p>
+<p><strong>На итоги это не влияет.</strong> В сырье старой версии написания были свои: <code>26LZ-</code> не встречается вовсе, строчных <code>26l-</code> — 38 строк прихода и 19 строк продаж (те же четыре артикула, причём одинаково написанные и в приходе, и в продажах), кириллическая «С» — 3 строки продаж. Сверку мы вели по приведённому написанию с обеих сторон, поэтому один и тот же товар в обеих версиях считался одной строкой. <strong>Приведение написаний не прибавило и не убавило ни одной штуки.</strong></p>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="3-vozvraty-146-262-eto-ne-novye-vozvraty-eto-drugoy">
+<h2>3. Возвраты: 146 → 262. Это не новые возвраты, это другой способ их показывать</h2>
+<p>Проверили каждый возврат по отдельности:</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Проверка</th><th>Результат</th></tr></thead><tbody><tr><td>Возвраты старой версии, которых нет в новой</td><td><strong>0</strong></td></tr><tr><td>Возвраты, которые есть в обеих</td><td><strong>146</strong></td></tr><tr><td>Возвраты, которые видит только новая версия</td><td><strong>116</strong></td></tr></tbody></table></div>
+<p>Куда девались эти 116 в старой версии? Они <strong>гасились внутри цифры «продано»</strong>. Старый отчёт по продажам приходил из 1С уже свёрнутым: если вещь купили и вернули, отчёт показывал не «продали 1, вернули 1», а сразу «продали 0». Отдельный лист возвратов подхватывал только часть случаев — 146 из 262.</p>
+<p>Проверка сходится до штуки:</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Шаг</th><th class="num">Штук</th></tr></thead><tbody><tr><td>Продано в старой версии</td><td class="num">6 864</td></tr><tr><td>Плюс 116 возвратов, которые она гасила внутри продаж</td><td class="num">+116</td></tr><tr><td>Минус 6 вещей, которые мы раньше считали дважды и починили (раздел 13)</td><td class="num">−6</td></tr><tr><td><strong>Продано в новой версии</strong></td><td class="num"><strong>6 974</strong></td></tr></tbody></table></div>
+<p>В прошлой редакции этого документа мы предупредили, что после починки подсчёта цифры разойдутся ровно на 6 штук. Так и вышло: это не новая ошибка, а исчезнувшая старая.</p>
+<p><strong>Что это значит на практике.</strong> «Продано» в новой версии — это сколько вещей ушло с полки, честное число. «Возвраты» — сколько вернулось, тоже честное. Раньше первое было занижено, второе — тем более. Итог «продано за вычетом возвратов» от способа учёта не зависит: 6 718 против 6 712, и вся разница — те же шесть штук.</p>
+<p><strong>Проверка по каждому товару.</strong> Возвраты изменились у 98 артикулов. У <strong>89 из них</strong> картина идеальная: возвраты выросли ровно на столько же, на сколько выросли продажи, — то есть изменился только способ показывать, а не сами продажи. У оставшихся <strong>9</strong> к смене учёта добавилась ещё одна правка:</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:88ch"><thead><tr><th>Артикул</th><th>Бренд</th><th>Продано было / стало</th><th>Возвраты было / стало</th><th class="num">Итог</th><th>Что именно случилось</th></tr></thead><tbody><tr><td>26L-20CMPA255A006439G-888</td><td>CP COMPANY</td><td>10 / 10</td><td>1 / 2</td><td class="num">−1</td><td>Возврат 22 июля, которого старая версия не видела ни в каком виде</td></tr><tr><td>26L-7708-BSKTCLAY</td><td>PREMIATE</td><td>20 / 20</td><td>1 / 2</td><td class="num">−1</td><td>Продажа 25 марта: в старом листе их было две, в новом одна</td></tr><tr><td>26L-8289-NOUS</td><td>PREMIATE</td><td>49 / 49</td><td>1 / 2</td><td class="num">−1</td><td>Продажа 5 апреля: в старом листе две, в новом одна</td></tr><tr><td>26L-7297-MOERUN</td><td>PREMIATE</td><td>44 / 46</td><td>0 / 3</td><td class="num">−1</td><td>Один возврат прошёл мимо старой версии</td></tr><tr><td>26L-8299-NOUS</td><td>PREMIATE</td><td>20 / 21</td><td>1 / 3</td><td class="num">−1</td><td>То же</td></tr><tr><td>26L-GONE-TREVI-861</td><td>DUNO</td><td>52 / 53</td><td>2 / 4</td><td class="num">−1</td><td>То же</td></tr><tr><td>26L-B026P022304</td><td>BOGGI</td><td>10 / 12</td><td>0 / 1</td><td class="num">+1</td><td>Продажа 6 мая в Астане, которой нет в старом листе продаж</td></tr><tr><td>26L-DUSON-TREVI-861</td><td>DUNO</td><td>81 / 85</td><td>2 / 5</td><td class="num">+1</td><td>Продажа 4 апреля в Мире, которой нет в старом листе</td></tr><tr><td>26L-RONAN-TREVI-274</td><td>DUNO</td><td>21 / 24</td><td>2 / 4</td><td class="num">+1</td><td>Продажа 11 апреля в Есентае, которой нет в старом листе</td></tr></tbody></table></div>
+<p>Необъяснённых среди них нет. Обратите внимание: строк про декабрь 2025 в этой таблице больше нет, и строки про нашу задвоенную продажу — тоже. И то и другое закрыто.</p>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="4-dekabr-2025-21-vesch-bylo-edinstvennym-nastoyaschim">
+<h2>4. Декабрь 2025: 21 вещь — было единственным настоящим расхождением, теперь закрыто</h2>
+<p>Коллекция начала продаваться 26 декабря 2025. Таблица продаж, из которой читает новая версия, начинается <strong>1 января 2026</strong>, и шесть первых дней продаж в неё не попали. В прошлой редакции этого документа мы посчитали недостающее косвенно — сопоставив продажи старого дашборда с новым источником штука за штукой — и получили такую картину:</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>День</th><th class="num">Штук</th></tr></thead><tbody><tr><td>26.12.2025</td><td class="num">4</td></tr><tr><td>27.12.2025</td><td class="num">5</td></tr><tr><td>29.12.2025</td><td class="num">1</td></tr><tr><td>30.12.2025</td><td class="num">1</td></tr><tr><td>31.12.2025</td><td class="num">10</td></tr><tr><td><strong>Итого</strong></td><td class="num"><strong>21</strong></td></tr></tbody></table></div>
+<p>Вы попросили декабрь учитывать. Мы взяли его отдельной выгрузкой из 1С — <strong>независимым источником, который наш подсчёт никак не видел</strong>, — и сверили с предсказанием.</p>
+<p><strong>Совпало до тенге и до дня.</strong> В выгрузке 3 462 строки за декабрь по всем коллекциям, из них к 26L относятся 24 строки. Они дают ровно <strong>21 вещь</strong>, разложение по дням — 4, 5, 1, 1, 10, деньги — <strong>2 526 000 ₸ до скидки и 2 166 750 ₸ со скидкой</strong>. Возвратов в декабре не было ни одного.</p>
+<p>По брендам: BRAX 9, VIADESTE 6, BOGGI 5, HENDERSON 1. По точкам: Астана 9, Есентай 6, Мира 3, Абайка 3.</p>
+<p>Эти 21 вещь теперь в данных, и на них новая версия больше не отстаёт.</p>
+<p><strong>Проверка после вливания.</strong> Мы заново сопоставили все 6 864 продажи старого дашборда с нынешним источником — по пяти признакам: день, магазин, артикул, размер, цена за штуку в целых тенге.</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:52ch"><thead><tr><th>Результат сверки</th><th class="num">Продаж</th></tr></thead><tbody><tr><td>Совпали по всем пяти признакам сразу</td><td class="num">6 791</td></tr><tr><td>Совпали после того, как один признак отпустили: у 51 изменилась цена, у 3 размер, у 3 код артикула, у 1 магазин</td><td class="num">58</td></tr><tr><td><strong>Нашли пару</strong></td><td class="num"><strong>6 849 из 6 864</strong></td></tr><tr><td>Остались без пары в старом листе</td><td class="num">15</td></tr><tr><td>Остались без пары в нынешнем источнике</td><td class="num">125</td></tr></tbody></table></div>
+<p><strong>Продаж старого листа за 26–31 декабря 2025, оставшихся без пары, — ноль.</strong> Раньше их был 21. Это и есть прямое доказательство, что дыра закрыта.</p>
+<p>Из 125 непарных продаж нынешнего источника <strong>112</strong> — это ровно те продажи, которые старый отчёт погасил возвратом (раздел 3): тот же магазин, тот же товар, тот же размер. Остальные <strong>13</strong> — продажи, которых в старом листе не было вовсе.</p>
+<p>Итог сходится в обе стороны:</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Что</th><th class="num">Штук</th></tr></thead><tbody><tr><td>Продажи, нашедшие пару</td><td class="num">6 849</td></tr><tr><td>Есть только в старом листе</td><td class="num">−15</td></tr><tr><td>Есть только в нынешнем источнике</td><td class="num">+125</td></tr><tr><td>Возвратов теперь на 116 больше, и они вычитаются отдельно</td><td class="num">−116</td></tr><tr><td><strong>Итог: продано за вычетом возвратов ниже на 6</strong></td><td class="num"><strong>−6</strong></td></tr></tbody></table></div>
+<p>Про строку «15» надо сказать честно. Смену дня, размера, магазина, цены и кода артикула сверка уже ловит — именно так нашлись 58 пар выше. <strong>Эти 15 строк не нашлись ни при одном послаблении.</strong> Скорее всего это продажи, которые 1С за дни между двумя выгрузками переоформила заново, но <strong>доказать это построчно мы не смогли</strong>.</p>
+<h3>Какие товары сдвинулись</h3>
+<p>Сдвиг задел <strong>27 артикулов из 1 556</strong> (в прошлой редакции их было 50): у 18 продажи за вычетом возвратов на 1–2 штуки меньше, у 9 — на 1–4 штуки больше. Крупнейшие:</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:81ch"><thead><tr><th>Артикул</th><th>Бренд</th><th class="num">Сдвиг</th><th>Причина</th></tr></thead><tbody><tr><td>26L-B024C005803</td><td>BOGGI</td><td class="num"><strong>+4</strong></td><td>Четыре продажи (апрель, июнь, июль), которых в старом листе не было. Самый крупный сдвиг по одному товару во всей сверке</td></tr><tr><td>26L-OTISMH-S100EU-07-950</td><td>BRANDT</td><td class="num"><strong>+4</strong></td><td>Две продажи переехали со старого кода артикула, ещё две (5 июня, 18 июля) в старом листе отсутствовали</td></tr><tr><td>26L-OTISMH-S100EU-107-950</td><td>BRANDT</td><td class="num">−2</td><td>Обратная сторона предыдущей строки: продажи ушли на новый код. Пара вместе даёт +2 — это и есть две новые продажи</td></tr><tr><td>26L-PEDULINO-999</td><td>PRISCO</td><td class="num">−2</td><td>26 июля в Абайке старый лист показывает 3 пары носков, новый источник — одну</td></tr><tr><td>26L-ROX-CESANO-002</td><td>DUNO</td><td class="num">−2</td><td>Две продажи (22 и 29 марта), не нашедшиеся в новом источнике</td></tr></tbody></table></div>
+<p>Остальные 22 артикула сдвинулись на одну штуку каждый. <strong>Приведение написаний артикула (раздел 2) в этот сдвиг не даёт ничего</strong> — ни одной штуки: сверка велась по приведённому написанию с обеих сторон.</p>
+<blockquote><p><strong>Вы это уже решили — см. последний раздел, пункт 1.</strong></p></blockquote>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="5-ostatok-11-195-11-389-dva-raznyh-sposoba-scheta">
+<h2>5. Остаток: 11 195 → 11 389. Два разных способа счёта</h2>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Версия</th><th>Откуда берётся остаток</th></tr></thead><tbody><tr><td>Старая</td><td>Из отдельной выгрузки «сколько лежит на складах» на 31 июля — <strong>факт</strong></td></tr><tr><td>Новая</td><td>Считается по формуле: приход − продано + возвраты — <strong>расчёт</strong></td></tr></tbody></table></div>
+<p>Разница +194 штуки раскладывается так:</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Слагаемое</th><th class="num">Штук</th></tr></thead><tbody><tr><td>Приход больше на 90 → и остаток больше на 90</td><td class="num">+90</td></tr><tr><td>Продано за вычетом возвратов меньше на 6 → остаток больше на 6</td><td class="num">+6</td></tr><tr><td><strong>Разрыв между фактом и расчётом</strong></td><td class="num"><strong>+98</strong></td></tr><tr><td><strong>Итого</strong></td><td class="num"><strong>+194</strong></td></tr></tbody></table></div>
+<p>Разрыв в 98 штук — это единственное содержательное, и он <strong>виден внутри самой старой версии</strong>, без всякого сравнения с новой:</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Числа только старой версии</th><th class="num">Штук</th></tr></thead><tbody><tr><td>Приход</td><td class="num">18 011</td></tr><tr><td>Минус продано за вычетом возвратов</td><td class="num">−6 718</td></tr><tr><td>Значит на складах должно лежать</td><td class="num"><strong>11 293</strong></td></tr><tr><td>А выгрузка остатков показывала</td><td class="num"><strong>11 195</strong></td></tr><tr><td><strong>Разрыв</strong></td><td class="num"><strong>98</strong></td></tr></tbody></table></div>
+<p>Он состоит из двух встречных частей:</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:74ch"><thead><tr><th>Часть</th><th class="num">Штук</th><th>Что это</th></tr></thead><tbody><tr><td>Товара на складе больше, чем «приход минус продажи»</td><td class="num">−33</td><td>Не потеря. Прихода на него в старом листе не было, а на складе он уже лежал — те же «опоздавшие» приходы из раздела 1</td></tr><tr><td>Товара на складе меньше, чем «приход минус продажи»</td><td class="num">+131</td><td>Списания, брак, пересорт, перемещения — всё, что уходит со склада не через кассу</td></tr><tr><td><strong>Разрыв</strong></td><td class="num"><strong>+98</strong></td><td></td></tr></tbody></table></div>
+<p>Затронуто 103 артикула из 1 556; по модулю разрыв — 164 штуки, это <strong>0,9 % прихода</strong>. Самые крупные (все пять чисел в таблице — <strong>из старой версии</strong>; «должно лежать» = её собственный приход минус её собственные продажи за вычетом возвратов):</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:88ch"><thead><tr><th>Артикул</th><th>Бренд</th><th class="num">Приход</th><th class="num">Продано за вычетом возвратов</th><th class="num">Должно лежать</th><th class="num">Лежало по выгрузке</th><th class="num">Разрыв</th></tr></thead><tbody><tr><td>26L-KOBRA-PM931-790</td><td>PEOPLE</td><td class="num">9</td><td class="num">13</td><td class="num">−4</td><td class="num">10</td><td class="num">−14</td></tr><tr><td>26L-U381294CA-38U27B-0595</td><td>PANICALE</td><td class="num">11</td><td class="num">1</td><td class="num">10</td><td class="num">0</td><td class="num">+10</td></tr><tr><td>26L-AOMORI-PM931-790</td><td>PEOPLE</td><td class="num">12</td><td class="num">11</td><td class="num">1</td><td class="num">9</td><td class="num">−8</td></tr><tr><td>26L-COZSUFZLOCL1MA38-0990</td><td>PT1</td><td class="num">12</td><td class="num">4</td><td class="num">8</td><td class="num">0</td><td class="num">+8</td></tr><tr><td>26L-RAS-TREVI-861</td><td>DUNO</td><td class="num">194</td><td class="num">102</td><td class="num">92</td><td class="num">86</td><td class="num">+6</td></tr><tr><td>26L-8232-ERIC</td><td>PREMIATE</td><td class="num">82</td><td class="num">25</td><td class="num">57</td><td class="num">52</td><td class="num">+5</td></tr><tr><td>26L-COZSUFZLOCL1MA38-0180</td><td>PT1</td><td class="num">7</td><td class="num">2</td><td class="num">5</td><td class="num">0</td><td class="num">+5</td></tr><tr><td>26L-8233-ERIC</td><td>PREMIATE</td><td class="num">102</td><td class="num">74</td><td class="num">28</td><td class="num">24</td><td class="num">+4</td></tr></tbody></table></div>
+<p>Первая и третья строки — это как раз недостающий приход: старая версия по своим же числам должна была показать у слаксов PEOPLE минус четыре штуки, а показывала 10. Новая версия добирает приход, и остаток сходится: 23 пришло, 13 продано, 10 осталось — ровно те же 10, что лежали на складе.</p>
+<p>Появилась и вторая, независимая опора под формулу. В выгрузке из 1С есть своя колонка остатка на конец периода — то есть фактический остаток, посчитанный самой 1С. Наш расчёт на неё ложится: на 3 мая из 1 212 общих товаров остаток сошёлся штука в штуку у <strong>1 167</strong>, а все вместе они дают <strong>12 086 штук по 1С против 12 130 по нашей формуле — разница 44 штуки, 0,4 %</strong>. Это сильнее прежней опоры: фактическая выгрузка старой версии расходилась с её же расчётом на 98 штук.</p>
+<blockquote><p><strong>Вы это уже решили — см. последний раздел, пункт 2.</strong></p></blockquote>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="6-otricatelnyy-ostatok-ostalsya-odin-artikul-na-odnu">
+<h2>6. Отрицательный остаток: остался один артикул на одну штуку</h2>
+<p>Раз остаток теперь считается, он может уйти в минус: значит, вещь продали, а прихода на неё в данных нет. В прошлой редакции таких артикулов было пять на 13 штук. Остался <strong>один, на одну штуку</strong>:</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:88ch"><thead><tr><th>Артикул</th><th>Бренд</th><th class="num">Приход</th><th class="num">Продано за вычетом возвратов</th><th class="num">Остаток</th><th>Почему</th></tr></thead><tbody><tr><td>26L-J600-SWD-CN9615-274</td><td>FRADI</td><td class="num">0</td><td class="num">1</td><td class="num">−1</td><td>В 1С исправили опечатку в коде (было <code>CN6915</code>, стало <code>CN9615</code>). Продажа переехала на исправленный код, приход остался на старом</td></tr></tbody></table></div>
+<p>Куда делись остальные четыре:</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:84ch"><thead><tr><th>Артикул</th><th>Бренд</th><th class="num">Было</th><th class="num">Стало</th><th>Чем закрылся</th></tr></thead><tbody><tr><td>26L-B024C005803</td><td>BOGGI</td><td class="num">−6</td><td class="num">+2</td><td>Приход 8 штук, 27 и 29 января — нашёлся в выгрузке из 1С</td></tr><tr><td>26L-OTISMH-S100EU-07-950</td><td>BRANDT</td><td class="num">−4</td><td class="num">+6</td><td>Приход 10 штук, 3 и 4 января — оттуда же</td></tr><tr><td>26L-B024C005802</td><td>BOGGI</td><td class="num">−1</td><td class="num">+7</td><td>Приход 8 штук, 27 и 29 января — оттуда же</td></tr><tr><td>26L-RONAN-TREVI-861</td><td>DUNO</td><td class="num">−1</td><td class="num">0</td><td>Минус закрылся сам: одна из шести задвоенных продаж (раздел 13) была его</td></tr></tbody></table></div>
+<p><strong>Этот факт теперь видно прямо на дашборде.</strong> Под плиткой «Остаток» появилась подпись «продано больше, чем принято: 1 товар, −1 шт». Пока минус есть — он на виду; когда его не станет, подписи не будет вовсе.</p>
+<p><strong>И это не новая болезнь, а впервые увиденная.</strong> В старой версии товары, у которых продано больше, чем пришло, тоже были — <strong>четыре, на 9 штук</strong>: те же две футболки BOGGI, BRANDT под старым кодом и слаксы PEOPLE. Просто старая версия рисовала им остаток из выгрузки — ноль или даже 10 — и противоречия не показывала. (Если считать так, как считала сама старая версия — по строкам её файла, где три товара двоились, — таких строк было семь на 12 штук.)</p>
+<p>Все четыре новая версия закрыла: слаксам PEOPLE приход нашёлся в вашей таблице, двум футболкам BOGGI и рубашке BRANDT — в выгрузке из 1С.</p>
+<blockquote><p><strong>Вы это уже решили — см. последний раздел, пункт 3.</strong></p></blockquote>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="7-magaziny-vosem-torgovyh-tochek-sovpali-tri-skladskie">
+<h2>7. Магазины: восемь торговых точек совпали, три складские строки ушли</h2>
+<div class="table-wrap" tabindex="0"><table style="min-width:46ch"><thead><tr><th>Точка</th><th class="num">Продано за вычетом возвратов, старая</th><th class="num">То же, новая</th><th class="num">Разница</th></tr></thead><tbody><tr><td>Астана</td><td class="num">2 109</td><td class="num">2 110</td><td class="num">+1</td></tr><tr><td>Абайка</td><td class="num">1 476</td><td class="num">1 471</td><td class="num">−5</td></tr><tr><td>Есентай</td><td class="num">1 329</td><td class="num">1 327</td><td class="num">−2</td></tr><tr><td>Мира</td><td class="num">1 071</td><td class="num">1 072</td><td class="num">+1</td></tr><tr><td>Above&amp;Beyond</td><td class="num">323</td><td class="num">323</td><td class="num">0</td></tr><tr><td>Above Астана</td><td class="num">231</td><td class="num">231</td><td class="num">0</td></tr><tr><td>Аутлет</td><td class="num">107</td><td class="num">107</td><td class="num">0</td></tr><tr><td>Kaspi</td><td class="num">72</td><td class="num">71</td><td class="num">−1</td></tr></tbody></table></div>
+<p>Сумма расхождений — ровно −6 штук, то есть те самые задвоенные продажи из раздела 13 (все шесть были оформлены в Абайке) и несколько строк, переехавших между точками. Одна продажа, например, в старом листе числится за Kaspi, а в новом источнике — за Мирой (слаксы PEOPLE <code>26L-WASHIBA-PM961-060</code>, 15 июня). В итоге по коллекции всё сходится, а по точкам штука-другая переезжает. <strong>Новых точек не появилось, ни одна торговая точка не пропала.</strong></p>
+<p><strong>Пропали три строки — «Ремонт БРАКА», «Склад Офис», «Склад Униформы».</strong> Продаж по ним нет ни в одной версии; в старом дашборде они показывались только потому, что на них числился остаток: 119, 139 и 150 штук, вместе <strong>408 штук</strong>.</p>
+<p>Новая версия остаток по точкам не разносит вовсе, поэтому склады из списка исчезли. <strong>Эти 408 штук из общего остатка никуда не делись</strong> — они внутри 11 389. Просто больше не видно, что они лежат на служебных складах, а не в магазинах.</p>
+<blockquote><p><strong>Вы это уже решили — см. последний раздел, пункты 4 и 5.</strong></p></blockquote>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="8-skidki-srednyaya-sovpala-do-desyatoy-doli-dve-korziny">
+<h2>8. Скидки: средняя совпала до десятой доли, две корзины перетасовались</h2>
+<p>Средняя скидка — <strong>25,27 % в старой версии и 25,25 % в новой</strong>. На экране обе версии показывают одно и то же число: <strong>25,3 %</strong>.</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:54ch"><thead><tr><th>Корзина</th><th class="num">Старая</th><th class="num">Новая</th><th class="num">Разница</th><th class="num">Доля продаж, новая</th></tr></thead><tbody><tr><td>Без скидки</td><td class="num">1 112</td><td class="num">1 144</td><td class="num">+32</td><td class="num">16,4 %</td></tr><tr><td>1–20 %</td><td class="num">2 665</td><td class="num">2 697</td><td class="num">+32</td><td class="num">38,7 %</td></tr><tr><td>21–30 %</td><td class="num">1 683</td><td class="num">1 703</td><td class="num">+20</td><td class="num">24,4 %</td></tr><tr><td>31–40 %</td><td class="num">632</td><td class="num">642</td><td class="num">+10</td><td class="num">9,2 %</td></tr><tr><td>41–50 %</td><td class="num">567</td><td class="num">583</td><td class="num">+16</td><td class="num">8,4 %</td></tr><tr><td><strong>51 % и больше</strong></td><td class="num"><strong>16</strong></td><td class="num"><strong>6</strong></td><td class="num"><strong>−10</strong></td><td class="num">0,1 %</td></tr><tr><td><strong>Продажи по 1 ₸</strong></td><td class="num"><strong>189</strong></td><td class="num"><strong>199</strong></td><td class="num"><strong>+10</strong></td><td class="num">2,9 %</td></tr></tbody></table></div>
+<p>Первые пять строк подросли ровно на те же 110 штук, что и общая цифра «продано» (раздел 3): 6 659 против 6 769.</p>
+<p><strong>Корзина «51 % и больше» была ошибкой старого способа счёта.</strong> Старый отчёт складывал в одну строку все продажи одного товара за день в одном магазине. Если в один день одну вещь отдали за 1 ₸ (подарок или бонус), а вторую продали за нормальные деньги, отчёт показывал «2 штуки, 348 000 ₸ без скидки, 139 201 ₸ со скидкой» — средняя скидка 60 %, и <strong>обе</strong> штуки уезжали в «51 % и больше». Так туда попали 10 штук у четырёх артикулов DUNO. Новая версия видит каждую продажу отдельно: подарок идёт в «Продажи по 1 ₸», обычная продажа — в свою настоящую корзину.</p>
+<p>Оставшиеся 6 штук в «51 % и больше» — это те же самые 6 штук, что были в старой версии: AERONAUTICA ×2, BOGGI, FABIANO RICCI, H&amp;BLANE, PREMIATE. Совпало артикул в артикул.</p>
+<p>Откуда +10 в «Продажи по 1 ₸»:</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Причина</th><th class="num">Штук</th></tr></thead><tbody><tr><td>Подарки, которые старый отчёт склеил с обычной продажей (4 артикула DUNO)</td><td class="num">+5</td></tr><tr><td>AERONAUTICA <code>26L-BE0282UCT04295-21326</code> — двум вещам в Аутлете 24 июля цену переписали с 55 500 ₸ на 1 ₸ уже после старой выгрузки</td><td class="num">+2</td></tr><tr><td>Продажи за 1 ₸, которых в старом листе продаж не было вовсе (CIRCOLO, PREMIATE ×2)</td><td class="num">+3</td></tr><tr><td>FRADI — та же вещь после исправления кода артикула (ушла со старого кода, пришла на новый)</td><td class="num">0</td></tr><tr><td><strong>Итого</strong></td><td class="num"><strong>+10</strong></td></tr></tbody></table></div>
+<p><strong>Счётчик «нет базовой цены»: было 4, стало 0.</strong> В старой версии это были не товары, а четыре строки-обрубка: продажа и её возврат схлопнулись в ноль штук и ноль тенге «без скидки», а «со скидкой» осталось минусом (−126 600 ₸ всего). Штук эти строки не несли ни одной, так что ни одна вещь в чужую корзину не уехала. В новой версии продажа и возврат живут порознь, у каждой продажи базовая цена есть, поэтому счётчик честно ноль.</p>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="9-muzhskoe-i-zhenskoe">
+<h2>9. Мужское и женское</h2>
+<div class="table-wrap" tabindex="0"><table style="min-width:46ch"><thead><tr><th>Разрез</th><th class="num">Старая</th><th class="num">Новая</th><th class="num">Разница</th></tr></thead><tbody><tr><td>Мужское, приход</td><td class="num">15 909</td><td class="num">15 993</td><td class="num">+84</td></tr><tr><td>Женское, приход</td><td class="num">2 102</td><td class="num">2 108</td><td class="num">+6</td></tr><tr><td><strong>Итого</strong></td><td class="num"><strong>18 011</strong></td><td class="num"><strong>18 101</strong></td><td class="num"><strong>+90</strong></td></tr></tbody></table></div>
+<p>84 + 6 = 90 — вся разница по полу это тот же самый недостающий приход из раздела 1, и ничего больше. Женская часть выросла на шесть штук: два июльских артикула ALYSI (по одной) и блуза MEIMEIJ (четыре).</p>
+<p>С продажами то же самое:</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:57ch"><thead><tr><th>Разрез</th><th class="num">Старая</th><th class="num">Новая</th><th class="num">Разница</th></tr></thead><tbody><tr><td>Мужское, продано за вычетом возвратов</td><td class="num">6 176</td><td class="num">6 170</td><td class="num">−6</td></tr><tr><td>Женское, продано за вычетом возвратов</td><td class="num"><strong>542</strong></td><td class="num"><strong>542</strong></td><td class="num"><strong>0</strong></td></tr></tbody></table></div>
+<p>Все шесть задвоенных продаж (раздел 13) оказались мужскими, женские продажи сошлись ровно.</p>
+<p><strong>Товаров без пола не осталось ни одного</strong> — ни в старой версии, ни в новой. В прошлой редакции документа один такой был: блуза MEIMEIJ <code>26L-M6EV01-R9110</code>, у которой категория записана как «Блуза К/Р». Вы решили считать такие вещи женскими рубашками — решение внесено, и пол у неё теперь есть.</p>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="10-razmery">
+<h2>10. Размеры</h2>
+<div class="table-wrap" tabindex="0"><table style="min-width:59ch"><thead><tr><th>Проверка</th><th>Результат</th></tr></thead><tbody><tr><td>Размеров в старой версии / в новой</td><td>83 / 83</td></tr><tr><td>Размеров, которые появились или пропали</td><td><strong>0</strong></td></tr><tr><td>Размеров, где разошёлся приход</td><td>16 (в сумме те же +90 штук)</td></tr><tr><td>Размеров, где разошлись продажи</td><td>32 (в сумме те же +110 штук)</td></tr></tbody></table></div>
+<p>Изменилось одно: <strong>в старой версии возвраты по размерам не раскладывались вообще.</strong> Размерный разрез показывал продажи «как есть», без вычета возвратов — их сумма по размерам была нулевой. Новая версия вычитает возврат из того размера, в котором он оформлен (все 262 штуки), поэтому остаток по размеру теперь сходится с остатком по артикулу.</p>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="11-kategorii-prochee-pusto-zato-poyavilsya-tip-platya">
+<h2>11. Категории: «Прочее» пусто, зато появился тип «Платья»</h2>
+<p>В прошлой редакции пять артикулов падали в «Прочее» — 1С писала у них категорию «Блуза К/Р», а такой категории в нашем справочнике типов не было. Вы решили относить их к женским рубашкам. Решение внесено, и <strong>«Прочее» теперь пусто совсем — ноль артикулов в обеих версиях.</strong> Таких блуз, кстати, оказалось не пять, а 23 (130 штук): свежие подписи из 1С показали их больше, чем видел старый лист.</p>
+<p>Заодно вы решили собрать все платья в отдельный тип. <strong>Появились «Платья» — 55 артикулов, 310 штук.</strong> 52 из них раньше лежали в «Костюмах», 3 — в «Кофтах».</p>
+<p>Как это выглядит по всем типам:</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Тип</th><th class="num">Артикулов, старая</th><th class="num">Артикулов, новая</th></tr></thead><tbody><tr><td>Кофты</td><td class="num">462</td><td class="num">435</td></tr><tr><td>Брюки</td><td class="num">301</td><td class="num">301</td></tr><tr><td>Обувь</td><td class="num">165</td><td class="num">165</td></tr><tr><td>Белье</td><td class="num">154</td><td class="num">154</td></tr><tr><td>Рубашки</td><td class="num">136</td><td class="num">162</td></tr><tr><td>Костюм</td><td class="num">134</td><td class="num">83</td></tr><tr><td>Головные уборы</td><td class="num">90</td><td class="num">90</td></tr><tr><td>Куртки</td><td class="num">66</td><td class="num">67</td></tr><tr><td>Аксессуары</td><td class="num">43</td><td class="num">43</td></tr><tr><td>Платья</td><td class="num">0</td><td class="num">55</td></tr><tr><td>Прочее</td><td class="num">0</td><td class="num">0</td></tr></tbody></table></div>
+<p>Подписи категорий мы теперь берём свежие — так, как их пишет 1С сегодня, а не так, как их когда-то записали в рабочую таблицу. Из-за этого у <strong>113 артикулов</strong> название категории изменилось. У <strong>82 из них</strong> сменился и тип товара — это и есть переезды в «Платья» и в «Рубашки». У остальных <strong>45</strong> тип остался прежним, а название поменялось: «Рубашка д/р» → «Лен д/р» (16 артикулов), «Шорты» → «Шорты городские» (11), «Слаксы» → «Лен» (7) и ещё десяток пар по одной-три штуки. На дашборде это видно в группировке по категории внутри типа.</p>
+<p>Изменилось и написание одного бренда: <strong>GENTL стал GENT'L</strong> (7 артикулов, 61 штука). Это тот же бренд, просто 1С пишет его с апострофом. В списке брендов по-прежнему 59 строк.</p>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="12-chto-proverili-i-rashozhdeniy-ne-nashli">
+<h2>12. Что проверили и расхождений не нашли</h2>
+<div class="table-wrap" tabindex="0"><table style="min-width:66ch"><thead><tr><th>Проверка</th><th>Результат</th></tr></thead><tbody><tr><td>Список торговых точек</td><td>Совпал: 8 и 8</td></tr><tr><td>Список размеров</td><td>Совпал: 83 и 83</td></tr><tr><td>Список брендов</td><td>59 и 59; у одного изменилось написание (GENTL → GENT'L)</td></tr><tr><td>Средняя скидка по коллекции</td><td>25,27 % и 25,25 %; на экране обе 25,3 %</td></tr><tr><td>Женский приход, если убрать три новых женских артикула</td><td>2 102 и 2 102</td></tr><tr><td>Женские продажи за вычетом возвратов</td><td>542 и 542</td></tr><tr><td>Корзина «51 % и больше», по артикулам</td><td>Те же 6 артикулов</td></tr><tr><td>Возвраты старой версии</td><td>Все 146 нашлись в новой</td></tr><tr><td>Продажи 26–31 декабря 2025 из старого листа</td><td>Все 21 нашлись в новом источнике</td></tr><tr><td>Продажи, нашедшие пару</td><td>6 849 из 6 864; из них 6 791 совпали сразу по всем пяти признакам, 58 — после того как один признак отпустили</td></tr><tr><td>Остаток по формуле против остатка в данных</td><td>18 101 − 6 712 = 11 389, сходится</td></tr></tbody></table></div>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="13-oshibka-kotoruyu-my-nashli-ne-stali-pryatat-i">
+<h2>13. Ошибка, которую мы нашли, не стали прятать и починили</h2>
+<p><strong>Что было. 6 штук считались дважды.</strong> 12 апреля в Абайке два чека (<code>0000-005493</code> и <code>0000-005494</code>) записаны в таблицу так: каждая позиция продублирована на двух продавцов, но в обеих строках стоит <strong>одно и то же имя</strong>. Прежнее правило делило строки на число разных имён — получало одного продавца и считало две вещи вместо одной. Задело шесть позиций: FABIANO RICCI, ONE G ×2, DUNO, BRANDT, FRADI. Это 0,09 % продаж.</p>
+<p><strong>Чем починили.</strong> В самой таблице продаж есть колонка «Кол-во продавцов в чеке», и на этих строках она говорит «2» — то есть источник знает правду. Теперь штуки считаются по ней: строки позиции делятся на число из колонки, если оно целое, не меньше числа разных имён в этих строках и делит строки нацело. Если хоть одно из условий не выполнено — считаем по-старому, по числу разных имён.</p>
+<p>Как это разошлось по всем 7 236 позициям среза (продажи и возвраты вместе):</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Что показала сверка</th><th class="num">Позиций</th></tr></thead><tbody><tr><td>Посчитано по колонке</td><td class="num"><strong>6 776</strong></td></tr><tr><td><strong>Колонка не заполнена вовсе</strong> — это продажи и возвраты, оформленные без продавца</td><td class="num"><strong>459 (6 %)</strong></td></tr><tr><td>Колонка заполнена, но строки на неё не делятся нацело</td><td class="num"><strong>1</strong></td></tr></tbody></table></div>
+<p>То есть на 94 % данных считает сам источник, а не наша догадка.</p>
+<p><strong>Про этот единственный случай — честно.</strong> Это возврат 15 февраля в Абайке (чек <code>0000-003009</code>, спортивный костюм DUNO): колонка говорит «4», а строк всего две, на двух разных продавцов. По деньгам видно, что 1С делила вещь на четверых, а до нас доехали две строки из четырёх — выгрузка теряет строки без продавца. Разделить 2 на 4 значило бы получить полвещи из одной вернувшейся. Поэтому в таком случае правило от колонки отказывается и считает по именам — получается одна вещь, что и правильно.</p>
+<p><strong>Как это связано с разделом 3.</strong> Тождество прошлой редакции держалось в том числе на этих шести штуках: наша лишняя шестёрка случайно гасила шесть продаж старого листа, не доехавших до нового источника. Теперь ошибки нет, и «продано за вычетом возвратов» честно ниже старого числа на 6 штук. Мы предупредили об этом заранее, в прошлой редакции этого документа.</p>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="14-otkuda-teper-berutsya-chisla">
+<h2>14. Откуда теперь берутся числа</h2>
+<p>Раньше дашборд опирался на две ручные выгрузки: приход брался из файла 1С, а число продавцов в чеке — из отдельной выгрузки продаж. Вы попросили больше ничего не выгружать руками — и обе зависимости сняты.</p>
+<p><strong>Теперь и приход, и продажи идут прямо из ваших таблиц, живым каналом.</strong> Обновление данных — четыре команды, их запускаем мы. Ничего выгружать и никуда прикладывать файлы не нужно.</p>
+<p>Из файла 1С осталось вшито ровно две вещи, и обе — разово:</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:68ch"><thead><tr><th>Что вшито</th><th>Зачем</th></tr></thead><tbody><tr><td><strong>26 январских штук</strong> по трём артикулам (BOGGI ×2 и BRANDT)</td><td>В ваших таблицах этого прихода нет вовсе, а без него три товара снова стали бы «продано без прихода» и вернули бы минусы в остаток (раздел 6)</td></tr><tr><td><strong>Свежие названия категорий</strong> для 1 542 товаров</td><td>Те, которые 1С пишет сегодня. Рабочая таблица хранит старые, и без этой замены не было бы ни «Платьев», ни пустого «Прочего» (раздел 11)</td></tr></tbody></table></div>
+<p>Три вещи, о которых надо сказать прямо.</p>
+<p><strong>Первое: одна штука по-разному разложена по размерам.</strong> У поло DUNO <code>26L-NOVUS-BARZI-800</code> файл 1С показывает M 10 и XL 4, а ваша таблица — M 9 и XL 5. Всего 28 штук и там и там, на всех итогах это не сказывается никак; на сверке со старой версией тоже не видно, потому что старая версия читала ту же таблицу. Мы знаем, что в этой мелочи таблица менее точна, чем 1С, и <strong>сознательно не стали ставить заплату</strong>: одна штука не стоит правила, которое пришлось бы помнить вечно.</p>
+<p><strong>Второе: зафиксированные названия категорий со временем устареют.</strong> Они заменяют то, что написано в таблице, безусловно. Значит, когда 1С переименует товар после сегодняшнего дня, а таблица это подхватит — наша фиксация перетрёт свежее название старым. Порядок величины: за прошедшие семь с половиной месяцев 1С переписала около сотни названий, и у двух-трёх десятков товаров из-за этого сменился тип. Сборка считает и показывает, сколько товаров приехало с названием, которого она не знает, — этот счётчик и есть сигнал «пора обновить справочник». Но переименование, о котором <strong>не узнала и сама таблица</strong>, не заметит никто: такого признака в данных просто нет. Справочнику назначен срок годности 90 дней; когда он выйдет, сборка скажет об этом вслух.</p>
+<p><strong>Третье: при обновлении сборка может остановиться и потребовать человека.</strong> Продажи и приход приезжают двумя запросами, и если они окажутся на разные даты — например, выгрузка продавцов отстанет от среза, — сборка не станет угадывать и просто откажется считать, назвав причину. Это сознательный размен: молчаливая альтернатива (посчитать на разных датах и не сказать) хуже, потому что расхождение в дашборде вы бы не отличили от настоящей динамики продаж.</p>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+<section id="voprosy-zakryty-chto-vy-reshili" class="callout">
+<h2>Вопросы закрыты: что вы решили</h2>
+<p>Все восемь вопросов прошлой редакции документа закрыты вашими ответами, решения внесены в новую версию.</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:88ch"><thead><tr><th>Вопрос</th><th>Ваше решение</th><th>Что сделано</th></tr></thead><tbody><tr><td>1. Декабрь 2025 — 21 вещь, 2,17 млн ₸</td><td>Учитывать</td><td>Взят отдельной выгрузкой из 1С и влит; предсказание сошлось до тенге (раздел 4)</td></tr><tr><td>2. Остаток — расчёт или факт</td><td>Расчёт</td><td>Дашборд показывает 11 389 (раздел 5)</td></tr><tr><td>3. Отрицательный остаток</td><td>Показывать минусом с пометкой</td><td>Под плиткой «Остаток» подпись «продано больше, чем принято» (раздел 6)</td></tr><tr><td>4. Служебные склады в разрезе по точкам</td><td>Не нужны</td><td>Разреза по точкам с остатками нет (раздел 7)</td></tr><tr><td>5. Остаток по магазинам</td><td>Не нужен</td><td>Не показывается</td></tr><tr><td>6. Категория «Блуза К/Р»</td><td>Женские рубашки</td><td>23 артикула, 130 штук — в «Рубашках»; «Прочее» пусто (раздел 11)</td></tr><tr><td>7. PORTOFINO <code>26L-PFW0025-011</code> и <code>-012</code></td><td>Мужские</td><td>Совпало с тем, как определилось само; менять было нечего</td></tr><tr><td>8. Два одинаковых имени продавца в чеке</td><td>Похоже на сбой; чинить у себя</td><td>Подсчёт починен, на кассе ничего менять не просим (раздел 13)</td></tr></tbody></table></div>
+<p>Решения второго круга:</p>
+<div class="table-wrap" tabindex="0"><table style="min-width:88ch"><thead><tr><th>Вопрос</th><th>Ваше решение</th><th>Что сделано</th></tr></thead><tbody><tr><td>Названия категорий — из таблицы или свежие из 1С</td><td>Свежие из 1С</td><td>Зафиксированы для 1 542 товаров (раздел 14)</td></tr><tr><td>«Платье к/р» — куда отнести</td><td>Завести отдельный тип «Платья» и собрать в нём все платья</td><td>55 артикулов, 310 штук (раздел 11)</td></tr><tr><td>Приход трёх артикулов, которого нет в таблицах</td><td>Вписать</td><td>26 январских штук вшиты разово (разделы 1 и 14)</td></tr></tbody></table></div>
+<p><strong>Открытым остаётся ровно одно, и это наша недоделка, а не ваш вопрос.</strong> В книге с продажами лежит второй лист, «Продажи все (копия)», на 33 411 строк — мы его так и не открыли: наш канал читает только рабочий лист по его имени. Практической нужды в этом листе больше нет — декабрь мы взяли из выгрузки 1С, — но недоделка есть недоделка, и мы её называем.</p>
+<a class="totop" href="#top">&#8593; Наверх</a>
+</section>
+</main>
+</body>
+</html>

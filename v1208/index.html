@@ -122,6 +122,10 @@
   .kpi-value.long{ font-size:clamp(16px,4vw,21px); }
   .kpi-label{ margin-top:7px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--ink3); }
   .kpi-sub{ margin-top:5px; font-size:12px; color:var(--ink2); font-weight:600; }
+  /* Подпись плитки «Выручка». Отдельное имя, а не .kpi-sub: на том классе висит страж
+     видимости минуса, который ждёт ровно один такой узел. Значения дублируют .kpi-sub
+     намеренно — общий предок сделал бы правку одной подписи правкой обеих. */
+  .kpi-note{ margin-top:5px; font-size:12px; color:var(--ink2); font-weight:600; }
 
   /* ===== Cards ===== */
   .card{
@@ -219,14 +223,21 @@
   .rating-controls{display:flex;gap:8px;flex-wrap:wrap}
   .rating-scroll{max-height:66vh;overflow:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px}
   .rating-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;min-width:560px}
-  .rating-table th,.rating-table td{padding:9px 10px;text-align:right;white-space:nowrap;
+  .rating-table th,.rating-table td{padding:9px 8px;text-align:right;white-space:nowrap;
     border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
   .rating-table th:last-child,.rating-table td:last-child{border-right:none}
   .rating-table th:first-child,.rating-table td:first-child{text-align:left}
   .rating-table thead th{position:sticky;top:0;z-index:2;background:var(--surface);
     color:var(--ink3);font-size:11px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;
     border-bottom:2px solid var(--accent-tint)}
-  .rating-table th.colpct,.rating-table td.pctcell{min-width:128px}
+  /* 116px вместо прежних 128: с девятью колонками таблица садилась в ширину планшета
+     ровно в край, без единого пикселя запаса. Мини-шкала в этой ширине цела — трек
+     и число мерены живым браузером, не на глаз. */
+  .rating-table th.colpct,.rating-table td.pctcell{min-width:116px}
+  /* Заголовок колонки выручки — единственный длинный: числа под ним короткие («16,5»),
+     и в одну строку он раздувал колонку до 123px, вытесняя таблицу за край планшета.
+     Перенос отдан только этой ячейке: остальным nowrap нужен, чтобы числа не рвались. */
+  .rating-table th.colrev{white-space:normal;line-height:1.25;min-width:66px}
   .rating-table tbody tr:hover td{background:var(--accent-soft)}
   .rating-table tr.bold td{font-weight:700;background:var(--bg)}
   .rating-table tr.lead td{background:var(--accent-soft)}
@@ -517,6 +528,29 @@ function fmt(n){ return nf.format(Math.round(n||0)); }
 function pct(x){ return Math.round((x||0)*100)+'%'; }
 function pct1(x){ return ((x||0)*100).toFixed(1).replace('.',',')+'%'; }
 function safeDiv(a,b){ return b?a/b:0; }
+// Деньги показываем ТОЛЬКО в миллионах — решение владельца от 15.08.2026. Крупное с
+// одним знаком (253,7), мелкое с двумя (0,07): выручка меньше миллиона у 43 родителей
+// из 100, при одном знаке они все слиплись бы в неразличимое «0,1». Ровный ноль пишем
+// нулём, а не прочерком: «не продавали» — это факт, а не отсутствие данных.
+function mln(n){
+  var v = (n||0)/1e6;
+  if (v === 0) return '0';
+  return v.toFixed(Math.abs(v) < 1 ? 2 : 1).replace('.',',');
+}
+// Выручка = продано по факту минус возвраты. retSum в данных хранится ОТРИЦАТЕЛЬНЫМ,
+// поэтому здесь плюс, а не минус: знак уже внутри числа.
+function revenue(r){ return (r.sumL||0) + (r.retSum||0); }
+// Доля в выручке. Целыми процентами эту колонку показывать нельзя: 28 брендов из 59
+// и 72 родителя из 100 округлились бы в «0 %» и колонка перестала бы что-либо
+// сообщать. Один знак оставляет в нуле только 6 брендов. Отдельная форма «<0,1%»
+// нужна, чтобы «продали чуть-чуть» не выглядело как «не продали вовсе»: настоящий
+// ноль пишется нулём, и это разные факты.
+function share(part, whole){
+  if (!part) return '0%';
+  var x = safeDiv(part, whole);
+  if (x > 0 && x < 0.001) return '<0,1%';
+  return pct1(x);
+}
 function luminance(hex){
   var h=hex.replace('#','');
   var r=parseInt(h.slice(0,2),16)/255, g=parseInt(h.slice(2,4),16)/255, b=parseInt(h.slice(4,6),16)/255;
@@ -586,6 +620,13 @@ function renderKpi(t, arts){
   var tiles = [
     { label:'Приход', value:fmt(t.in) },
     { label:'Продано', value:fmt(soldNet) },
+    // Выручка стоит сразу за «Продано»: это те же продажи, только в деньгах. Подпись
+    // идёт СВОИМ классом, а не .kpi-sub — на .kpi-sub завязан страж видимости минуса
+    // (client_visible.test.js ждёт ровно один такой узел на странице).
+    // Единица живёт в ЯРЛЫКЕ, а не в значении: «922,9 млн ₸» крупным шрифтом не влезает
+    // в плитку и рвётся так, что знак тенге повисает на второй строке один. Проверка
+    // «не обрезано» этого не ловила — увидели глазами на скриншоте.
+    { label:'Выручка, млн ₸', value:mln(revenue(t)), note:'после возвратов' },
     { label:'Остаток', value:fmt(t.rem), sub:negRemNote(arts) },
     { label:'Средняя скидка', value:avg }
   ];
@@ -593,7 +634,8 @@ function renderKpi(t, arts){
   for (i=0;i<tiles.length;i++)
     h += '<div class="kpi-tile"><span class="kpi-accent"></span><div class="kpi-value">'+tiles[i].value+
          '</div><div class="kpi-label">'+tiles[i].label+'</div>'+
-         (tiles[i].sub ? '<div class="kpi-sub">'+tiles[i].sub+'</div>' : '')+'</div>';
+         (tiles[i].sub ? '<div class="kpi-sub">'+tiles[i].sub+'</div>' : '')+
+         (tiles[i].note ? '<div class="kpi-note">'+tiles[i].note+'</div>' : '')+'</div>';
   return h + '</section>';
 }
 var BAND_NAMES = ['0%','1-20%','21-30%','31-40%','41-50%','51%+','Продажи по 1 тг'];
@@ -622,15 +664,20 @@ function ratingAgg(arts, keyFn){
   var m={}, order=[], i, a, k, r;
   for (i=0;i<arts.length;i++){ a=arts[i]; k=keyFn(a);
     r=m[k];
-    if(!r){ r={ key:k, in:0, sold:0, ret:0, rem:0, sumK:0, sumL:0 }; m[k]=r; order.push(r); }
-    r.in+=a.in; r.sold+=a.sold; r.ret+=a.ret; r.rem+=a.rem; r.sumK+=a.sumK; r.sumL+=a.sumL;
+    if(!r){ r={ key:k, in:0, sold:0, ret:0, rem:0, sumK:0, sumL:0, retSum:0 }; m[k]=r; order.push(r); }
+    r.in+=a.in; r.sold+=a.sold; r.ret+=a.ret; r.rem+=a.rem;
+    r.sumK+=a.sumK; r.sumL+=a.sumL; r.retSum+=a.retSum;
   }
   return order;
 }
-function ratingMetrics(r){
-  var soldNet = r.sold + r.ret;
+// База доли передаётся снаружи — это выручка ВСЕГО среза, а не суммы видимых строк.
+// Иначе доли в группировке считались бы дважды от разного (типы от одного итога,
+// родители от другого) и два столбца процентов на одном экране не сходились бы.
+function ratingMetrics(r, revBase){
+  var soldNet = r.sold + r.ret, rev = revenue(r);
   return { key:r.key, in:r.in, soldNet:soldNet,
     soldPct: safeDiv(soldNet, r.in), rem:r.rem, remPct: safeDiv(r.rem, r.in),
+    rev: rev, revPct: safeDiv(rev, revBase), revShare: share(rev, revBase),
     disc: r.sumK>0 ? (1 - safeDiv(r.sumL, r.sumK)) : null };
 }
 // лидеры по доле продаж: топ-3 среди строк с достаточным объёмом (>=10% макс. прихода среза)
@@ -644,10 +691,10 @@ function leaderKeys(rows){
   for (i=0;i<n;i++) keys[elig[i].key]=true;
   return keys;
 }
-function ratingFlat(arts, dim){
+function ratingFlat(arts, dim, revBase){
   var keyFn = dim==='brand' ? function(a){return a.b;} : function(a){return a.p;};
   var raw = ratingAgg(arts, keyFn), rows=[], i;
-  for (i=0;i<raw.length;i++) rows.push(ratingMetrics(raw[i]));
+  for (i=0;i<raw.length;i++) rows.push(ratingMetrics(raw[i], revBase));
   rows.sort(function(a,b){ return a.key.localeCompare(b.key,'ru'); });   // бренды по алфавиту
   return rows;
 }
@@ -670,15 +717,22 @@ function ratingRowHtml(r, o){
     '<td>'+fmt(r.soldNet)+'</td>'+
     '<td class="'+pctCls+'"><div class="pctrow"><span class="pcttrack"><span class="pctfill" style="width:'+w+'%"></span></span>'+
       '<span class="pctnum">'+pct(r.soldPct)+'</span></div></td>'+
+    '<td>'+mln(r.rev)+'</td>'+
+    '<td>'+r.revShare+'</td>'+
     '<td>'+fmt(r.rem)+remNote+'</td>'+
     '<td>'+pct(r.remPct)+'</td>'+
     '<td>'+(r.disc==null ? '—' : pct1(r.disc))+'</td>'+
   '</tr>';
 }
 function ratingHead(){
-  var cols = ['Название','Приход','Продано шт','Продано %','Остаток шт','Остаток %','Ср.скидка'];
-  var h='<tr>', i;
-  for (i=0;i<cols.length;i++) h += '<th'+(i===3?' class="colpct"':'')+'>'+cols[i]+'</th>';
+  // Единица вынесена в шапку, а не повторяется в каждой ячейке: 100 строк по «млн ₸»
+  // это лишние 700 знаков ширины на планшете, где таблица и так впритык.
+  var cols = ['Название','Приход','Продано шт','Продано %','Выручка, млн ₸','Доля','Остаток шт','Остаток %','Ср.скидка'];
+  var h='<tr>', i, cls;
+  for (i=0;i<cols.length;i++){
+    cls = i===3 ? ' class="colpct"' : (i===4 ? ' class="colrev"' : '');
+    h += '<th'+cls+'>'+cols[i]+'</th>';
+  }
   return h+'</tr>';
 }
 function ratingWrap(body){
@@ -691,17 +745,17 @@ function ratingTableHtml(rows){
   for (i=0;i<rows.length;i++) body += ratingRowHtml(rows[i], { lead: !!leads[rows[i].key] });
   return ratingWrap(body);
 }
-function ratingGroupedHtml(arts){
+function ratingGroupedHtml(arts, revBase){
   var typeRaw = ratingAgg(arts, function(a){return a.t;});
   var types=[], i, j;
-  for (i=0;i<typeRaw.length;i++) types.push(ratingMetrics(typeRaw[i]));
+  for (i=0;i<typeRaw.length;i++) types.push(ratingMetrics(typeRaw[i], revBase));
   types.sort(function(a,b){ return a.key.localeCompare(b.key,'ru'); });   // типы по алфавиту (Аксессуары первыми)
   var allLeaves=[];
   for (i=0;i<types.length;i++){
     var tk = types[i].key, kidsArts=[];
     for (j=0;j<arts.length;j++) if (arts[j].t===tk) kidsArts.push(arts[j]);
     var kidRaw = ratingAgg(kidsArts, function(a){return a.p;}), kids=[];
-    for (j=0;j<kidRaw.length;j++) kids.push(ratingMetrics(kidRaw[j]));
+    for (j=0;j<kidRaw.length;j++) kids.push(ratingMetrics(kidRaw[j], revBase));
     kids.sort(function(a,b){ return b.soldNet-a.soldNet; });   // внутри типа — по продажам
     types[i]._kids = kids;
     for (j=0;j<kids.length;j++) allLeaves.push(kids[j]);
@@ -727,8 +781,11 @@ function renderRating(s){
     ratingSegBtn('Бренд',    dim==='brand',  brandChosen, 'data-rdim="brand"')+
     ratingSegBtn('Родитель', dim==='parent', false,       'data-rdim="parent"')+'</div>';
   var title = 'Рейтинг' + (brandChosen ? ' · '+esc(ST.brand) : '');
-  var body = (dim==='brand') ? ratingTableHtml(ratingFlat(s.arts, 'brand'))
-                             : ratingGroupedHtml(s.arts);
+  // База доли — выручка среза целиком. При выбранном бренде срез уже сужен до него,
+  // поэтому доли внутри бренда складываются в 100 % от ЕГО выручки, а не от сети.
+  var revBase = revenue(s.tot);
+  var body = (dim==='brand') ? ratingTableHtml(ratingFlat(s.arts, 'brand', revBase))
+                             : ratingGroupedHtml(s.arts, revBase);
   return '<section class="card"><div class="rating-head">'+
     '<h2 class="card-title">'+title+'</h2>'+
     '<div class="rating-controls">'+dimCtl+'</div></div>'+

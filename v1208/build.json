@@ -1,15 +1,15 @@
 {
-  "builtAt": "2026-08-30T08:35:13.120Z",
-  "builtAtHuman": "30 августа, 13:35",
-  "sliceTo": "2026-08-30",
-  "dataDate": "29.08.2026",
+  "builtAt": "2026-08-31T08:58:14.059Z",
+  "builtAtHuman": "31 августа, 13:58",
+  "sliceTo": "2026-08-31",
+  "dataDate": "30.08.2026",
   "numbers": {
     "in": 18106,
-    "sold": 7987,
-    "ret": -300,
-    "rem": 10419,
+    "sold": 8014,
+    "ret": -301,
+    "rem": 10393,
     "records": 1555,
-    "revenueNet": 1020873438
+    "revenueNet": 1024507389
   },
   "ok": true,
   "error": null
